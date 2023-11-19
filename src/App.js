@@ -2,7 +2,8 @@
 import './App.css';
 import SignIn from './components/auth/SignIn';
 import SignUp from './components/auth/SignUp';
-import AuthDetails from './components/AuthDetails'
+import AuthDetails from './components/AuthDetails';
+import UserProfile from './components/profile/UserProfile';
 
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
       <SignIn />
       <SignUp />
       <AuthDetails />
+      <UserProfile />
     </div>
   );
 }
