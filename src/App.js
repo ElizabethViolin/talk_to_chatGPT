@@ -4,6 +4,8 @@ import SignIn from './components/auth/SignIn';
 import SignUp from './components/auth/SignUp';
 import AuthDetails from './components/AuthDetails';
 import UserProfile from './components/profile/UserProfile';
+import VoiceRecorder from './components/VoiceRecorder';
+
 
 
 function App() {
@@ -13,6 +15,7 @@ function App() {
       <SignUp />
       <AuthDetails />
       <UserProfile />
+      <VoiceRecorder />
     </div>
   );
 }

@@ -9,6 +9,7 @@
     "aws-sdk": "^2.1499.0",
     "firebase": "^10.6.0",
     "firebaseui": "^6.1.0",
+    "microsoft-cognitiveservices-speech-sdk": "^1.33.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
