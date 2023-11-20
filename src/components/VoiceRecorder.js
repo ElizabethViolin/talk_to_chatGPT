@@ -1,28 +1,53 @@
-// VoiceRecorder.js (or wherever you want to call getMicrophoneAccess)
-
 import React, { useState } from 'react';
-import { getMicrophoneAccess } from './MicrophoneAccess'; // Adjust the import path as necessary
+import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
+import { getMicrophoneAccess } from './MicrophoneAccess';
 
 const VoiceRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
+  const [transcription, setTranscription] = useState('');
 
-  const startRecording = () => {
-    getMicrophoneAccess()
-      .then(stream => {
-        // Microphone access was granted
-        console.log('Microphone access granted!', stream);
-        setIsRecording(true); // Now we're ready to start recording
-        // Here you would handle the stream, like starting the speech recognition
-      })
-      .catch(error => {
-        // Microphone access was denied or there was another error
-        console.error('Could not get microphone access', error);
-      });
+  const azureSubscriptionKey = process.env.REACT_APP_AZURE_SPEECH_KEY;
+  const azureServiceRegion = process.env.REACT_APP_AZURE_SERVICE_REGION;  
+
+  const startRecognition = () => {
+    const audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
+    const speechConfig = sdk.SpeechConfig.fromSubscription(azureSubscriptionKey, azureServiceRegion);
+
+    const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
+
+    recognizer.recognizeOnceAsync(
+      result => {
+        if (result.reason === sdk.ResultReason.RecognizedSpeech) {
+          setTranscription(result.text);
+        } else {
+          setTranscription('No speech could be recognized or no speech was detected.');
+        }
+        setIsRecording(false);
+        recognizer.close();
+      },
+      err => {
+        setTranscription('An error occurred during transcription.');
+        console.error('ERROR: ', err);
+        setIsRecording(false);
+        recognizer.close();
+      }
+    );
+  };
+
+  const toggleRecording = () => {
+    if (!isRecording) {
+      setIsRecording(true);
+      setTranscription('');
+      getMicrophoneAccess().then(startRecognition).catch(console.error);
+    }
   };
 
   return (
     <div>
-      <button onClick={startRecording}>Start Recording</button>
+      <button onClick={toggleRecording}>
+        {isRecording ? 'Recording...' : 'Start Recording'}
+      </button>
+      <p>Transcription: {transcription}</p>
     </div>
   );
 };
