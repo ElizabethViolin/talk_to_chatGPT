@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 import { getMicrophoneAccess } from './MicrophoneAccess';
 
-const VoiceRecorder = () => {
+const VoiceRecorder = (props) => {
   const [isRecording, setIsRecording] = useState(false);
   const [transcription, setTranscription] = useState('');
+  const { onTranscriptionComplete } = props; // Destructure the prop
 
   const azureSubscriptionKey = process.env.REACT_APP_AZURE_SPEECH_KEY;
-  const azureServiceRegion = process.env.REACT_APP_AZURE_SERVICE_REGION;  
-
+  const azureServiceRegion = process.env.REACT_APP_AZURE_SERVICE_REGION;
+  
   const startRecognition = () => {
     const audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
     const speechConfig = sdk.SpeechConfig.fromSubscription(azureSubscriptionKey, azureServiceRegion);
@@ -19,6 +20,8 @@ const VoiceRecorder = () => {
       result => {
         if (result.reason === sdk.ResultReason.RecognizedSpeech) {
           setTranscription(result.text);
+          // Call the onTranscriptionComplete function with the new transcription
+          onTranscriptionComplete(result.text);
         } else {
           setTranscription('No speech could be recognized or no speech was detected.');
         }
